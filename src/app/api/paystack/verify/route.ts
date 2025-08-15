@@ -50,7 +50,7 @@ export async function GET(req: Request) {
     if (student) {
       const room = await prisma.room.findUnique({ where: { id: payment.roomId } })
       await sendPaymentReceipt({
-        toEmail:     student.email!,
+        to:     student.email!,
         studentName: student.fullName,
         roomBlock:   room?.block || '',
         roomNumber:  room?.number || 0,

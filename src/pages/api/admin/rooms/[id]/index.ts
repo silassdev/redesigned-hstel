@@ -1,14 +1,12 @@
-// src/pages/api/admin/rooms/[id]/index.ts
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
-import { withLogging }                  from '@/lib/withLogging'
+import { withLogging } from '@/lib/withLogging'
 
- async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const id = parseInt(req.query.id as string, 10)
-  if (isNaN(id)) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // Parse id safely (handles string | string[])
+  const idParam = Array.isArray(req.query.id) ? req.query.id[0] : req.query.id
+  const id = Number(idParam)
+  if (!Number.isFinite(id)) {
     return res.status(400).json({ message: 'Invalid room ID' })
   }
 
@@ -24,7 +22,7 @@ import { withLogging }                  from '@/lib/withLogging'
       }
 
       case 'PATCH': {
-        // Update fields — e.g. mark as filled
+        // Update fields — e.g., mark as filled
         const { isFilled } = req.body
         const data: { isFilled?: boolean } = {}
 
@@ -53,8 +51,12 @@ import { withLogging }                  from '@/lib/withLogging'
         res.setHeader('Allow', ['GET', 'PATCH', 'DELETE'])
         return res.status(405).end(`Method ${req.method} Not Allowed`)
     }
-  } catch (error: any) {
-    console.error('[/api/admin/rooms/[id]] error:', error)
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('[/api/admin/rooms/[id]] error:', error.message, error.stack)
+    } else {
+      console.error('[/api/admin/rooms/[id]] Non-Error thrown:', error)
+    }
     return res.status(500).json({ message: 'Internal server error' })
   }
 }

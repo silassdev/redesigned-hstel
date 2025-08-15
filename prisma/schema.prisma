@@ -22,6 +22,7 @@ model Student {
   sponsorPhone String
   sessionYear  String
   passwordHash String
+  dept         String?
   roomId       Int?
   room         Room?     @relation(fields: [roomId], references: [id])
   tickets      Ticket[]

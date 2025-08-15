@@ -12,9 +12,10 @@ export function withLogging(
     try {
       await handler(req, res)
       await logEvent('INFO', `✔ ${context} succeeded [${req.method}]`, context)
-    } catch (err: any) {
-      await logEvent('ERROR', `✖ ${context} error: ${err.message}`, context)
-      throw err  
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err)
+      await logEvent('ERROR', `✖ ${context} error: ${message}`, context)
+      throw err
     } finally {
       const ms = Date.now() - start
       await logEvent('DEBUG', `← ${context} done in ${ms}ms`, context)

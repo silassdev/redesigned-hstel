@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import crypto from 'crypto'
 import { prisma } from '@/lib/prisma'
 
-export const runtime = 'node' 
+export const runtime = 'nodejs' 
 export async function POST(request: Request) {
   // 1) Read raw body for signature verification
   const bodyText = await request.text()

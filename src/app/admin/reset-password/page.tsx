@@ -16,7 +16,7 @@ export default function ResetPasswordPage() {
   const [success, setSuccess]     = useState(false)
   const [loading, setLoading]     = useState(false)
 
-  // 1) Validate token on mount
+  
   useEffect(() => {
     if (!token) {
       setValid(false)

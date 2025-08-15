@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎓 Hostel Management Portal
 
-## Getting Started
+A full-stack **Next.js 15** application for managing student hostel allocations, payments, and support tickets. Built with **TypeScript**, **Prisma** + PostgreSQL, **NextAuth** for authentication, **Paystack** for payments, and **nodemailer** for receipts.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Public / Main Page
+- Particle-effect background with “Student Sign-Up”, “Student Login”, “Forgot Password” and “Admin Login” panels.
+- Responsive, accessible, and styled with Tailwind CSS.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Student
+- **Sign-Up** collects: full name, reg-no, phone, email, state, LGA, photo upload, gender, sponsor info, session year, password/confirm.
+- **Login** via email or reg-no + password.
+- **Dashboard** shows profile + status (room assignment, payment status).
+- **Room Requests** list available rooms (filtered by gender), then redirect to Paystack popup.
+- **Payments** page lists past payments, payment receipts.
+- **Tickets** page: open/close support tickets with subject, message (>20 chars), image upload, threaded replies.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Admin
+- **Invite** new admins by email → unique token email for password-setup.
+- **Dashboard** with cards linking to Rooms / Students / Tickets / Logs / Admins / Payments.
+- **Rooms**: add blocks+rooms (max 5 per block), specify gender & price; grid view by gender & occupancy; detail modal to view occupants, mark filled/empty, delete.
+- **Students**: view list (filter by year/gender/payment/tickets), edit full profile, upload photo, manually set payment, clear room assignment, delete.
+- **Tickets**: view open/closed tickets, filter by gender, pagination; reply & close tickets; email notifications.
+- **Payments**: search student by name/email/reg-no, mark paid manually (records admin), send PDF receipt, list recent payments, filter & pagination.
+- **Session Management**: “Start fresh session” clears room assignments & payment flags, sets new session label.
+- **Export Data**: filter by gender/year/payment, download PDF table.
+- **Live Logs**: auto-refresh every 10 sec showing API events and errors.
+- **Charts**: stacked bar chart showing total vs paid by gender for current session.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🏗 Architecture & Tech Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Next.js 15** (App Router, Server & Client Components)
+- **TypeScript** end-to-end
+- **Tailwind CSS** styling
+- **Prisma** ORM with PostgreSQL
+- **NextAuth** with Credentials Provider for Admin & Student
+- **Paystack** inline for live payments (test mode)
+- **nodemailer** + **pdf-lib** for email receipts
+- **Recharts** for Session charts
+- **html2canvas** + **jsPDF** for PDF export
+- Custom **logger** in `/lib/logger` to record API events
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 📥 Getting Started
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Clone & install**  
+   ```bash
+   git clone https://github.com/stainpl/hostel-management.git
+   cd hostel-management
+   npm install

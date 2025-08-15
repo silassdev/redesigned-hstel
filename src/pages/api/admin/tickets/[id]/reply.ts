@@ -1,10 +1,8 @@
-// src/pages/api/admin/tickets/[id]/reply.ts
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/pages/api/auth/[...nextauth]'
 import { prisma } from '@/lib/prisma'
 import { withLogging } from '@/lib/withLogging' 
-
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const session = await getServerSession(req, res, authOptions)
@@ -24,7 +22,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    // Ensure ticket exists
     const ticket = await prisma.ticket.findUnique({ where: { id: ticketId } })
     if (!ticket) {
       return res.status(404).json({ message: 'Ticket not found.' })
@@ -38,14 +35,16 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       },
     })
 
-    // (Optional) trigger email notification to student here
-
     return res.status(201).json(reply)
-  } catch (err: any) {
-    console.error('Admin reply error:', err)
+  } catch (err: unknown) {
+    // Narrow to Error only for logging; keep client response generic
+    if (err instanceof Error) {
+      console.error('Admin reply error:', err.message, err.stack)
+    } else {
+      console.error('Admin reply error (non-Error):', err)
+    }
     return res.status(500).json({ message: 'Internal server error.' })
   }
 }
+
 export default withLogging(handler, 'admin.tickets.reply')
-
-

@@ -22,9 +22,9 @@ export type StudentAdmin = {
   id: number
   fullName: string
   email: string
-  room: string               // e.g. "A-101" or "—"
+  room: string              
   gender: 'MALE' | 'FEMALE'
-  sessionYear: number        // parsed from string
+  sessionYear: number        
 }
 
 export default async function AdminStudentsPage({
@@ -41,24 +41,24 @@ export default async function AdminStudentsPage({
     redirect('/auth/login')
   }
 
-  // 2) Read filters & pagination
+  const TAKE = 10
+  
   const pageParam = params.page || '1'
   const gender    = params.gender?.toUpperCase()
   const yearParam = params.year || ''
   const page      = parseInt(pageParam, 10) || 1
   const take      = 10
-  const skip      = (page - 1) * take
+  const skip      = (page - 1) * TAKE
 
-  // 3) Build Prisma where clause
+ 
   const where: Record<string, any> = {}
   if (gender === 'MALE' || gender === 'FEMALE') {
     where.gender = gender
   }
   if (/^\d{4}$/.test(yearParam)) {
-    where.sessionYear = yearParam  // Prisma will compare string
+    where.sessionYear = yearParam 
   }
 
-  // 4) Fetch raw rows + count
   const [rawRows, total]: [RawStudent[], number] = await prisma.$transaction([
     prisma.student.findMany({
       where,

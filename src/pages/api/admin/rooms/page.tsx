@@ -65,16 +65,20 @@ export default function AdminRoomsPage() {
 
     // --- POST only ---
     try {
-      const res = await axios.post<Room>('/api/admin/rooms', {
+      await axios.post<Room>('/api/admin/rooms', {
         block: blockVal,
         number: numberVal,
         price: priceVal,
       })
       toast.success(`Room ${blockVal}-${numberVal} created`)
       e.currentTarget.reset()
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (axios.isAxiosError(err) && err.response?.status === 409) {
-        toast.error(err.response.data.message) // duplicate
+        const msg =
+          typeof err.response.data?.message === 'string'
+            ? err.response.data.message
+            : 'Room already exists'
+        toast.error(msg)
       } else {
         console.error('Error creating room:', err)
         toast.error('Unexpected error creating room')
@@ -214,9 +218,7 @@ export default function AdminRoomsPage() {
                   accessor: 'id',
                   cell: (_: number, row: Room) => (
                     <button
-                      onClick={() =>
-                        markRoom(row, action === 'fill')
-                      }
+                      onClick={() => markRoom(row, action === 'fill')}
                       className="btn-secondary text-sm"
                     >
                       {action === 'fill' ? 'Mark Filled' : 'Empty Room'}

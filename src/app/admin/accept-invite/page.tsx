@@ -18,7 +18,6 @@ export default function AcceptInvitePage() {
   const [loading, setLoading] = useState(false)
   const [valid, setValid] = useState<boolean | null>(null)
 
-  // Validate token on mount
   useEffect(() => {
     if (!token) {
       router.replace('/')
@@ -65,7 +64,7 @@ export default function AcceptInvitePage() {
     }
   }
 
-  // If token invalid
+
   if (valid === false) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">

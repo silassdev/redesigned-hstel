@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth/next'
-import { IncomingForm } from 'formidable'
-import fs from 'fs'
+import { IncomingForm, Fields, Files } from 'formidable'
 import { authOptions } from '../../auth/[...nextauth]'
 import { prisma } from '@/lib/prisma'
 import { withLogging } from '@/lib/withLogging'
@@ -9,7 +8,7 @@ import { withLogging } from '@/lib/withLogging'
 export const config = { api: { bodyParser: false } }
 
 // Helper to parse form with formidable
-function parseForm(req: NextApiRequest): Promise<{ fields: any; files: any }> {
+function parseForm(req: NextApiRequest): Promise<{ fields: Fields; files: Files }> {
   return new Promise((resolve, reject) => {
     const form = new IncomingForm({
       uploadDir: './public/uploads',
@@ -83,8 +82,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     })
 
     return res.status(201).json(ticket)
-  } catch (error: any) {
-    console.error('Ticket creation error:', error)
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : String(error)
+    console.error('Ticket creation error:', errMsg)
     return res.status(500).json({ message: 'Error opening ticket.' })
   }
 }

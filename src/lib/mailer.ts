@@ -1,5 +1,5 @@
-// src/lib/mailer.ts
 import nodemailer from 'nodemailer'
+import type { Attachment } from 'nodemailer/lib/mailer'
 import { PDFDocument, rgb } from 'pdf-lib'
 import fontkit from '@pdf-lib/fontkit'
 import path from 'path'
@@ -15,47 +15,52 @@ const transporter = nodemailer.createTransport({
 })
 
 /**
- * Generic email sender
+ * Generic email sender for invites, password resets, etc.
  */
 export async function sendEmail(opts: {
   to: string
   subject: string
   html: string
   text?: string
+  cc?: string | string[]
+  bcc?: string | string[]
+  attachments?: Attachment[]
 }) {
-  const { to, subject, html, text } = opts
+  const { to, subject, html, text, cc, bcc, attachments } = opts
+
   await transporter.sendMail({
     from: `"${process.env.SCHOOL_NAME}" <${process.env.SMTP_USER}>`,
     to,
     subject,
-    text,
     html,
+    text,
+    cc,
+    bcc,
+    attachments,
   })
 }
 
 /**
- * Send a PDF payment receipt
+ * Specialised sender: generates a PDF receipt and attaches it to the email
  */
 export async function sendPaymentReceipt(opts: {
   to: string
   studentName: string
   roomBlock: string
   roomNumber: number
-  amount: number   // in NGN
+  amount: number  
   reference: string
   date: Date
 }) {
   const { to, studentName, roomBlock, roomNumber, amount, reference, date } = opts
-  let attachments: any[] = []
+  const attachments: Attachment[] = []
 
   const nairaAmount = amount / 100
-
 
   try {
     // PDF generation
     const pdfDoc = await PDFDocument.create()
-    pdfDoc.registerFontkit(fontkit as any)
-
+    pdfDoc.registerFontkit(fontkit as never)
     const fontPath = path.join(process.cwd(), 'public', 'fonts', 'static', 'Roboto-Regular.ttf')
     const fontBytes = fs.readFileSync(fontPath)
     const customFont = await pdfDoc.embedFont(fontBytes)
@@ -117,7 +122,11 @@ export async function sendPaymentReceipt(opts: {
     })
 
     const pdfBytes = await pdfDoc.save()
-    attachments.push({ filename: `receipt-${reference}.pdf`, content: Buffer.from(pdfBytes), contentType: 'application/pdf' })
+    attachments.push({
+      filename: `receipt-${reference}.pdf`,
+      content: Buffer.from(pdfBytes),
+      contentType: 'application/pdf'
+    })
   } catch (err) {
     console.error('[Mailer] PDF generation failed, sending plain email', err)
   }

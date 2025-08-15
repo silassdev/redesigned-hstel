@@ -7,7 +7,11 @@
       "dom.iterable",
       "esnext"
     ],
-    "types": ["next",  "node", "jquery"], 
+    "types": [
+      "next",
+      "node",
+      "jquery"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "outDir": "dist",
@@ -21,22 +25,31 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "plugins": [{ "name": "next" }],
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "paths": {
-      "@/lib/*": ["./src/lib/*"],
-      "@/*": ["./src/*"]
+      "@/lib/*": [
+        "./src/lib/*"
+      ],
+      "@/*": [
+        "./src/*"
+      ]
     }
   },
   "include": [
-    "next-env.d.ts",
-    "server.ts",
-    "lib/**/*.ts",
-    "prisma/**/*.ts",
     "**/*.ts",
     "**/*.tsx",
+    "lib/**/*.ts",
+    "next-env.d.ts",
+    "prisma/**/*.ts",
+    "server.ts",
     ".next/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    ".next"
   ]
 }

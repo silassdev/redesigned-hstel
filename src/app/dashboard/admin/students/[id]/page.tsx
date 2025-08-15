@@ -8,17 +8,26 @@ import { prisma } from '@/lib/prisma'
 import EditStudentForm from '@/components/forms/EditStudentForm'
 
 interface Props {
-  params: { id: string }
+  // Next.js 15 supplies params as a Promise
+  params: Promise<{ id: string }>
 }
 
 export default async function EditStudentPage({ params }: Props) {
-  // 1) Auth guard
+  // await the params promise (fixes the TypeScript mismatch from Next.js 15)
+  const { id } = await params
+  const studentId = Number(id)
+
+  // if id is not a valid number, redirect back to list
+  if (Number.isNaN(studentId)) {
+    redirect('/dashboard/admin/students')
+  }
+
+  // 1) Auth guard (server-side)
   const session = await getServerSession(authOptions)
   if (!session?.user?.role || session.user.role !== 'admin') {
     redirect('/auth/login')
   }
 
-  const studentId = Number(params.id)
   const student = await prisma.student.findUnique({
     where: { id: studentId },
     select: {
@@ -55,9 +64,12 @@ export default async function EditStudentPage({ params }: Props) {
           </Link>
         </header>
 
-        {/* Pass the student as initial values */}
-        <EditStudentForm initialData={{ ...student, sessionYear: Number(student.sessionYear) }} />
-
+        <EditStudentForm
+          initialData={{
+            ...student,
+            sessionYear: Number(student.sessionYear),
+          }}
+        />
       </main>
     </div>
   )
