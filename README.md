@@ -51,6 +51,6 @@ A full-stack **Next.js 15** application for managing student hostel allocations,
 
 1. **Clone & install**  
    ```bash
-   git clone https://github.com/stainpl/hostel-management.git
+   git clone https://github.com/silassdev/hostel-management.git
    cd hostel-management
    npm install
